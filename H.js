@@ -1,17 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SimpleAdder = void 0;
-var SimpleAdder = /** @class */ (function () {
-    function SimpleAdder() {
-        this.sum = 0;
+exports.StoringAdder = void 0;
+var StoringAdder = /** @class */ (function () {
+    function StoringAdder() {
+        this.store = [];
     }
-    SimpleAdder.prototype.add = function (nr) { this.sum += nr; };
-    SimpleAdder.prototype.getSum = function () {
-        return this.sum;
+    StoringAdder.prototype.add = function (nr) {
+        this.store.push(nr);
     };
-    SimpleAdder.prototype.reset = function () {
-        this.sum = 0;
+    StoringAdder.prototype.getSum = function () {
+        var sum = 0;
+        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
+            var amount = _a[_i];
+            sum += amount;
+        }
+        return sum;
     };
-    return SimpleAdder;
+    StoringAdder.prototype.getRange = function () {
+        if (this.store.length === 0) {
+            return 0;
+        }
+        var minimum = this.store[0];
+        var maximum = minimum;
+        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
+            var amount = _a[_i];
+            if (amount < minimum) {
+                minimum = amount;
+            }
+            if (amount > maximum) {
+                maximum = amount;
+            }
+        }
+        return maximum - minimum;
+    };
+    StoringAdder.prototype.reset = function () {
+        this.store = [];
+    };
+    return StoringAdder;
 }());
-exports.SimpleAdder = SimpleAdder;
+exports.StoringAdder = StoringAdder;

@@ -1,21 +1,43 @@
-interface Adder{
-    add(nr: number):void;
-    getSum():number;
-    reset(): void; // Added reset method to the interface
+interface Adder {
+    add(nr: number): void;
+    getSum(): number;
+    getRange(): number;
+    reset(): void;
 }
 
-class SimpleAdder implements Adder{
-    protected sum:number=0;
-    add(nr:number){this.sum+=nr;}
+export class StoringAdder implements Adder {
+    protected store: number[] = [];
+
+    add(nr: number) {
+        this.store.push(nr);
+    }
+
     getSum(): number {
-        return this.sum;
+        let sum: number = 0;
+        for (let amount of this.store) {
+            sum += amount;
+        }
+        return sum;
     }
-    reset() {
-        this.sum = 0;
-    }
-}
 
-export{
-    Adder,
-    SimpleAdder
+    getRange(): number {
+        if (this.store.length === 0) {
+            return 0;
+        }
+        let minimum: number = this.store[0];
+        let maximum: number = minimum;
+        for (let amount of this.store) {
+            if (amount < minimum) {
+                minimum = amount;
+            }
+            if (amount > maximum) {
+                maximum = amount;
+            }
+        }
+        return maximum - minimum;
+    }
+
+    reset() {
+        this.store = [];
+    }
 }
