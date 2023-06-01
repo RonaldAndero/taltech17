@@ -1,6 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.initApp = exports.sendLog = exports.checkDiskSize = void 0;
 var nodemailer_1 = require("nodemailer");
+function checkDiskSize(diskSize, logFn) {
+    if (diskSize < 500000000) {
+        logFn("Low disk space: ".concat(diskSize, " bytes"));
+    }
+}
+exports.checkDiskSize = checkDiskSize;
+function sendLog(transporter, content) {
+    var mailOptions = {
+        from: 'juku@juurikas.ee',
+        to: 'juku@juurikas.ee',
+        subject: 'Log',
+        text: content
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.error(error);
+        }
+        else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+exports.sendLog = sendLog;
+function initApp(freeMemory, logFn, transporter) {
+    if (freeMemory < 100000) {
+        logFn("Vaba m\u00E4lu ainult ".concat(freeMemory));
+        return false;
+    }
+    logFn('Rakendus käivitus');
+    return true;
+}
+exports.initApp = initApp;
+// Usage example:
 var transporter = nodemailer_1.default.createTransport({
     service: 'gmail',
     auth: {
@@ -8,29 +42,7 @@ var transporter = nodemailer_1.default.createTransport({
         pass: 'kala'
     }
 });
-function sendLog(content) {
-    var mailOptions = {
-        from: 'juku@juurikas.ee',
-        to: 'juku@juurikas.ee',
-        subject: 'Log',
-        text: content
-    };
-    transporter.sendMail(mailOptions);
-}
-function checkDiskSize(diskSize) {
-    if (diskSize < 1000000000) {
-        sendLog("Low disk space: ".concat(diskSize, " bytes"));
-    }
-    else {
-        console.log('Disk space is sufficient');
-    }
-}
-checkDiskSize(500000000); // Adjust the disk size value as per your requirement
-function initApp(freeMemory, mailFn) {
-    if (freeMemory < 100000) {
-        mailFn("Low free memory: ".concat(freeMemory));
-        return;
-    }
-    mailFn('Application started');
-}
-initApp(15000, console.log); // Adjust the free memory value as per your requirement
+// Call the functions with the necessary parameters
+initApp(150000, console.log, transporter);
+sendLog(transporter, 'Sample log content');
+checkDiskSize(100000000, console.log);

@@ -1,6 +1,41 @@
 import nodemailer from 'nodemailer';
 
-let transporter = nodemailer.createTransport({
+export function checkDiskSize(diskSize: number, logFn: (message: string) => void) {
+    if (diskSize < 500000000) {
+        logFn(`Low disk space: ${diskSize} bytes`);
+    }
+}
+
+export function sendLog(transporter: any, content: string) {
+    const mailOptions = {
+        from: 'juku@juurikas.ee',
+        to: 'juku@juurikas.ee',
+        subject: 'Log',
+        text: content
+    };
+
+    transporter.sendMail(mailOptions, (error: any, info: any) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
+
+export function initApp(freeMemory: number, mailFn: any): boolean {
+    if (freeMemory < 100000) {
+        mailFn("Vaba mälu ainult " + freeMemory);
+        return false;
+    }
+
+    mailFn("Rakendus käivitus");
+    return true;
+}
+
+
+// Usage example:
+const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'juku@juurikas.ee',
@@ -8,32 +43,7 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-function sendLog(content: string) {
-    let mailOptions = {
-        from: 'juku@juurikas.ee',
-        to: 'juku@juurikas.ee',
-        subject: 'Log',
-        text: content
-    };
-    transporter.sendMail(mailOptions);
-}
-
-function checkDiskSize(diskSize: number) {
-    if (diskSize < 1000000000) {
-        sendLog(`Low disk space: ${diskSize} bytes`);
-    } else {
-        console.log('Disk space is sufficient');
-    }
-}
-
-checkDiskSize(500000000); // Adjust the disk size value as per your requirement
-
-function initApp(freeMemory: number, mailFn: any) {
-    if (freeMemory < 100000) {
-        mailFn(`Low free memory: ${freeMemory}`);
-        return;
-    }
-    mailFn('Application started');
-}
-
-initApp(15000, console.log); // Adjust the free memory value as per your requirement
+// Call the functions with the necessary parameters
+initApp(150000, console.log);
+sendLog(transporter, 'Sample log content');
+checkDiskSize(100000000, console.log);

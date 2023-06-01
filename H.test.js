@@ -1,53 +1,48 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var H_1 = require("./H");
-var B_1 = require("./B");
-var adder = null;
-var counter = null;
-beforeEach(function () {
-    adder = new H_1.StoringAdder();
-    counter = new B_1.CharCounter(adder);
-});
+// Test the start function
 test('start', function () {
-    expect(adder.getSum()).toBe(0);
+    expect((0, H_1.initApp)(200000, console.log)).toBe(true);
 });
-test('one value', function () {
-    adder.add(3);
-    expect(adder.getSum()).toBe(3);
+// Test with mock memory within the limit
+test('mock memory ok', function () {
+    var mockFn = jest.fn();
+    (0, H_1.initApp)(200000, mockFn);
+    expect(mockFn).toBeCalledWith("Rakendus käivitus");
 });
-test('two values', function () {
-    adder.add(3);
-    adder.add(5);
-    expect(adder.getSum()).toBe(8);
+// Test with mock memory below the limit
+test('mock memory little', function () {
+    var mockFn = jest.fn();
+    var transporter = {}; // Create a mock transporter instance
+    (0, H_1.initApp)(20000, mockFn, transporter); // Pass the transporter instance as the third argument
+    expect(mockFn).toBeCalledWith("Vaba mälu ainult 20000");
+    expect(mockFn).toBeCalledTimes(1);
 });
-test('two values range', function () {
-    adder.add(3);
-    adder.add(5);
-    expect(adder.getRange()).toBe(2);
+// Test disk size within the limit
+test('disk size ok', function () {
+    var mockFn = jest.fn();
+    (0, H_1.checkDiskSize)(1000000000, mockFn); // Adjust the disk size value as per your requirement
+    expect(mockFn).not.toBeCalled();
 });
-test('reset', function () {
-    adder.add(3);
-    adder.add(5);
-    expect(adder.getSum()).toBe(8);
-    adder.reset();
-    expect(adder.getSum()).toBe(0);
+// Test disk size below the limit
+test('disk size little', function () {
+    var mockFn = jest.fn();
+    (0, H_1.checkDiskSize)(500000000, mockFn); // Adjust the disk size value as per your requirement
+    expect(mockFn).toBeCalledWith("Low disk space: 500000000 bytes");
+    expect(mockFn).toBeCalledTimes(1);
 });
-test('charCounter', function () {
-    counter.addWordCharacters("Juku");
-    counter.addWordCharacters("tuli");
-    counter.addWordCharacters("kooli");
-    expect(counter.getCharacterCount()).toBe(13);
+// Test disk size above the limit
+test('disk size large', function () {
+    var mockFn = jest.fn();
+    (0, H_1.checkDiskSize)(2000000000, mockFn); // Adjust the disk size value as per your requirement
+    expect(mockFn).not.toBeCalled();
 });
-test('charCounter reset', function () {
-    counter.addWordCharacters("Juku");
-    counter.addWordCharacters("tuli");
-    expect(counter.getCharacterCount()).toBe(8); // Update expected value to 8
-    adder.reset();
-    expect(counter.getCharacterCount()).toBe(0);
-});
-test('charCounter longest word', function () {
-    counter.addWordCharacters("Juku");
-    counter.addWordCharacters("tuli");
-    counter.addWordCharacters("kooli");
-    expect(counter.getLongestWordLength()).toBe(5); // Update expected value to 5
-});
+// Function to execute when the application actually runs
+function runApp() {
+    var freeMemory = 200000; // Adjust the free memory value as per your requirement
+    var diskSize = 1000000000; // Adjust the disk size value as per your requirement
+    (0, H_1.checkDiskSize)(diskSize, H_1.sendLog);
+    (0, H_1.initApp)(freeMemory, H_1.sendLog);
+}
+runApp();
