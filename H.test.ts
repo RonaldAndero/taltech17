@@ -1,18 +1,31 @@
-import { Adder, SimpleAdder } from "./H";
+import {Adder, SimpleAdder} from "./H";
 
-test('test1', () => {
-    let adder: Adder = new SimpleAdder();
+let adder:Adder=null;
+
+beforeEach(() => {
+    adder = new SimpleAdder();
+});
+
+test('start', () => {
     expect(adder.getSum()).toBe(0);
+});
+
+test('one value', () => {
     adder.add(3);
     expect(adder.getSum()).toBe(3);
+});
+
+test('two values', () => {
+    adder.add(3);
     adder.add(5);
     expect(adder.getSum()).toBe(8);
 });
 
-test('test2', () => {
-    let adder: Adder = new SimpleAdder();
-    adder.add(2);
-    adder.add(4);
-    adder.add(6);
-    expect(adder.getSum()).toBe(12);
+test('reset', () => {
+    adder.add(3);
+    adder.add(5);
+    expect(adder.getSum()).toBe(8);
+
+    adder.reset();
+    expect(adder.getSum()).toBe(0);
 });

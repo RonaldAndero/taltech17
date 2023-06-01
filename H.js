@@ -9,6 +9,9 @@ var SimpleAdder = /** @class */ (function () {
     SimpleAdder.prototype.getSum = function () {
         return this.sum;
     };
+    SimpleAdder.prototype.reset = function () {
+        this.sum = 0;
+    };
     return SimpleAdder;
 }());
 exports.SimpleAdder = SimpleAdder;

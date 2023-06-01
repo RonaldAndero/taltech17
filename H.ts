@@ -1,6 +1,7 @@
 interface Adder{
     add(nr: number):void;
     getSum():number;
+    reset(): void; // Added reset method to the interface
 }
 
 class SimpleAdder implements Adder{
@@ -8,6 +9,9 @@ class SimpleAdder implements Adder{
     add(nr:number){this.sum+=nr;}
     getSum(): number {
         return this.sum;
+    }
+    reset() {
+        this.sum = 0;
     }
 }
 
