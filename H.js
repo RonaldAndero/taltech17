@@ -1,41 +1,36 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StoringAdder = void 0;
-var StoringAdder = /** @class */ (function () {
-    function StoringAdder() {
-        this.store = [];
+var nodemailer_1 = require("nodemailer");
+var transporter = nodemailer_1.default.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'juku@juurikas.ee',
+        pass: 'kala'
     }
-    StoringAdder.prototype.add = function (nr) {
-        this.store.push(nr);
+});
+function sendLog(content) {
+    var mailOptions = {
+        from: 'juku@juurikas.ee',
+        to: 'juku@juurikas.ee',
+        subject: 'Log',
+        text: content
     };
-    StoringAdder.prototype.getSum = function () {
-        var sum = 0;
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            sum += amount;
-        }
-        return sum;
-    };
-    StoringAdder.prototype.getRange = function () {
-        if (this.store.length === 0) {
-            return 0;
-        }
-        var minimum = this.store[0];
-        var maximum = minimum;
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            if (amount < minimum) {
-                minimum = amount;
-            }
-            if (amount > maximum) {
-                maximum = amount;
-            }
-        }
-        return maximum - minimum;
-    };
-    StoringAdder.prototype.reset = function () {
-        this.store = [];
-    };
-    return StoringAdder;
-}());
-exports.StoringAdder = StoringAdder;
+    transporter.sendMail(mailOptions);
+}
+function checkDiskSize(diskSize) {
+    if (diskSize < 1000000000) {
+        sendLog("Low disk space: ".concat(diskSize, " bytes"));
+    }
+    else {
+        console.log('Disk space is sufficient');
+    }
+}
+checkDiskSize(500000000); // Adjust the disk size value as per your requirement
+function initApp(freeMemory, mailFn) {
+    if (freeMemory < 100000) {
+        mailFn("Low free memory: ".concat(freeMemory));
+        return;
+    }
+    mailFn('Application started');
+}
+initApp(15000, console.log); // Adjust the free memory value as per your requirement
