@@ -10,35 +10,45 @@ class CharCounter {
         this.adder.add(word.length);
     }
 
-    addWords(words: string[]): void {
-        for (let word of words) {
-            this.addWordCharacters(word);
-        }
-    }
-
     getCharacterCount() {
         return this.adder.getSum();
     }
 }
 
-class SimpleAdder implements Adder {
+class CountingAdder implements Adder {
     protected sum: number = 0;
+    protected count: number = 0;
+    protected largestValue: number = Number.NEGATIVE_INFINITY;
 
     add(nr: number) {
         this.sum += nr;
+        this.count++;
+        if (nr > this.largestValue) {
+            this.largestValue = nr;
+        }
     }
 
     getSum(): number {
         return this.sum;
     }
+
+    getAverage() {
+        if (this.count > 0) {
+            return this.sum / this.count;
+        }
+        return 0;
+    }
+
+    getLargestValue() {
+        return this.largestValue;
+    }
 }
 
-let adder1: Adder = new SimpleAdder();
+let adder1: CountingAdder = new CountingAdder();
 let counter1: CharCounter = new CharCounter(adder1);
 counter1.addWordCharacters("Juku");
 counter1.addWordCharacters("tuli");
 counter1.addWordCharacters("kooli");
-console.log(counter1.getCharacterCount()); // Output: 13
-
-counter1.addWords(["hello", "world", "typescript"]);
-console.log(counter1.getCharacterCount()); // Output: 32
+console.log(counter1.getCharacterCount());
+console.log(adder1.getAverage());
+console.log(adder1.getLargestValue());

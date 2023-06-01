@@ -5,34 +5,43 @@ var CharCounter = /** @class */ (function () {
     CharCounter.prototype.addWordCharacters = function (word) {
         this.adder.add(word.length);
     };
-    CharCounter.prototype.addWords = function (words) {
-        for (var _i = 0, words_1 = words; _i < words_1.length; _i++) {
-            var word = words_1[_i];
-            this.addWordCharacters(word);
-        }
-    };
     CharCounter.prototype.getCharacterCount = function () {
         return this.adder.getSum();
     };
     return CharCounter;
 }());
-var SimpleAdder = /** @class */ (function () {
-    function SimpleAdder() {
+var CountingAdder = /** @class */ (function () {
+    function CountingAdder() {
         this.sum = 0;
+        this.count = 0;
+        this.largestValue = Number.NEGATIVE_INFINITY;
     }
-    SimpleAdder.prototype.add = function (nr) {
+    CountingAdder.prototype.add = function (nr) {
         this.sum += nr;
+        this.count++;
+        if (nr > this.largestValue) {
+            this.largestValue = nr;
+        }
     };
-    SimpleAdder.prototype.getSum = function () {
+    CountingAdder.prototype.getSum = function () {
         return this.sum;
     };
-    return SimpleAdder;
+    CountingAdder.prototype.getAverage = function () {
+        if (this.count > 0) {
+            return this.sum / this.count;
+        }
+        return 0;
+    };
+    CountingAdder.prototype.getLargestValue = function () {
+        return this.largestValue;
+    };
+    return CountingAdder;
 }());
-var adder1 = new SimpleAdder();
+var adder1 = new CountingAdder();
 var counter1 = new CharCounter(adder1);
 counter1.addWordCharacters("Juku");
 counter1.addWordCharacters("tuli");
 counter1.addWordCharacters("kooli");
-console.log(counter1.getCharacterCount()); // Output: 13
-counter1.addWords(["hello", "world", "typescript"]);
-console.log(counter1.getCharacterCount()); // Output: 32
+console.log(counter1.getCharacterCount());
+console.log(adder1.getAverage());
+console.log(adder1.getLargestValue());
