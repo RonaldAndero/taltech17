@@ -10,38 +10,58 @@ var CharCounter = /** @class */ (function () {
     };
     return CharCounter;
 }());
-var CountingAdder = /** @class */ (function () {
-    function CountingAdder() {
-        this.sum = 0;
-        this.count = 0;
-        this.largestValue = Number.NEGATIVE_INFINITY;
+var StoringAdder = /** @class */ (function () {
+    function StoringAdder() {
+        this.store = [];
     }
-    CountingAdder.prototype.add = function (nr) {
-        this.sum += nr;
-        this.count++;
-        if (nr > this.largestValue) {
-            this.largestValue = nr;
+    StoringAdder.prototype.add = function (nr) {
+        this.store.push(nr);
+    };
+    StoringAdder.prototype.getSum = function () {
+        var sum = 0;
+        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
+            var amount = _a[_i];
+            sum += amount;
         }
+        return sum;
     };
-    CountingAdder.prototype.getSum = function () {
-        return this.sum;
-    };
-    CountingAdder.prototype.getAverage = function () {
-        if (this.count > 0) {
-            return this.sum / this.count;
+    StoringAdder.prototype.getAverage = function () {
+        if (this.store.length > 0) {
+            return this.getSum() / this.store.length;
         }
         return 0;
     };
-    CountingAdder.prototype.getLargestValue = function () {
-        return this.largestValue;
+    StoringAdder.prototype.getRange = function () {
+        if (this.store.length === 0) {
+            return 0;
+        }
+        var minimum = this.store[0];
+        var maximum = minimum;
+        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
+            var amount = _a[_i];
+            if (amount < minimum) {
+                minimum = amount;
+            }
+            if (amount > maximum) {
+                maximum = amount;
+            }
+        }
+        return maximum - minimum;
     };
-    return CountingAdder;
+    StoringAdder.prototype.getMaximumValue = function () {
+        if (this.store.length === 0) {
+            return 0;
+        }
+        return Math.max.apply(Math, this.store);
+    };
+    return StoringAdder;
 }());
-var adder1 = new CountingAdder();
+var adder1 = new StoringAdder();
 var counter1 = new CharCounter(adder1);
 counter1.addWordCharacters("Juku");
 counter1.addWordCharacters("tuli");
 counter1.addWordCharacters("kooli");
 console.log(counter1.getCharacterCount());
 console.log(adder1.getAverage());
-console.log(adder1.getLargestValue());
+console.log(adder1.getRange());
+console.log(adder1.getMaximumValue());

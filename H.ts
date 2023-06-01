@@ -15,40 +15,59 @@ class CharCounter {
     }
 }
 
-class CountingAdder implements Adder {
-    protected sum: number = 0;
-    protected count: number = 0;
-    protected largestValue: number = Number.NEGATIVE_INFINITY;
+class StoringAdder implements Adder {
+    protected store: number[] = [];
 
     add(nr: number) {
-        this.sum += nr;
-        this.count++;
-        if (nr > this.largestValue) {
-            this.largestValue = nr;
-        }
+        this.store.push(nr);
     }
 
     getSum(): number {
-        return this.sum;
+        let sum: number = 0;
+        for (let amount of this.store) {
+            sum += amount;
+        }
+        return sum;
     }
 
     getAverage() {
-        if (this.count > 0) {
-            return this.sum / this.count;
+        if (this.store.length > 0) {
+            return this.getSum() / this.store.length;
         }
         return 0;
     }
 
-    getLargestValue() {
-        return this.largestValue;
+    getRange() {
+        if (this.store.length === 0) {
+            return 0;
+        }
+        let minimum: number = this.store[0];
+        let maximum: number = minimum;
+        for (let amount of this.store) {
+            if (amount < minimum) {
+                minimum = amount;
+            }
+            if (amount > maximum) {
+                maximum = amount;
+            }
+        }
+        return maximum - minimum;
+    }
+
+    getMaximumValue() {
+        if (this.store.length === 0) {
+            return 0;
+        }
+        return Math.max(...this.store);
     }
 }
 
-let adder1: CountingAdder = new CountingAdder();
+let adder1: StoringAdder = new StoringAdder();
 let counter1: CharCounter = new CharCounter(adder1);
 counter1.addWordCharacters("Juku");
 counter1.addWordCharacters("tuli");
 counter1.addWordCharacters("kooli");
 console.log(counter1.getCharacterCount());
 console.log(adder1.getAverage());
-console.log(adder1.getLargestValue());
+console.log(adder1.getRange());
+console.log(adder1.getMaximumValue());
