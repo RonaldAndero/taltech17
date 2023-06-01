@@ -1,67 +1,139 @@
-var CharCounter = /** @class */ (function () {
-    function CharCounter(adder) {
-        this.adder = adder;
+var InchesToCm = /** @class */ (function () {
+    function InchesToCm() {
     }
-    CharCounter.prototype.addWordCharacters = function (word) {
-        this.adder.add(word.length);
+    InchesToCm.prototype.calculate = function (inches) {
+        return inches * 2.54;
     };
-    CharCounter.prototype.getCharacterCount = function () {
-        return this.adder.getSum();
+    InchesToCm.prototype.inputUnit = function () {
+        return "in";
     };
-    return CharCounter;
+    InchesToCm.prototype.outputUnit = function () {
+        return "cm";
+    };
+    return InchesToCm;
 }());
-var StoringAdder = /** @class */ (function () {
-    function StoringAdder() {
-        this.store = [];
+var CalculationsStore = /** @class */ (function () {
+    function CalculationsStore(calculator) {
+        this.calculator = calculator;
+        this.inputs = [];
+        this.outputs = [];
     }
-    StoringAdder.prototype.add = function (nr) {
-        this.store.push(nr);
+    CalculationsStore.prototype.addInput = function (x) {
+        this.inputs.push(x);
+        this.outputs.push(this.calculator.calculate(x));
     };
-    StoringAdder.prototype.getSum = function () {
-        var sum = 0;
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            sum += amount;
+    CalculationsStore.prototype.getResult = function () {
+        var result = [];
+        for (var index in this.inputs) {
+            result.push(this.inputs[index] +
+                " " +
+                this.calculator.inputUnit() +
+                " - " +
+                this.outputs[index] +
+                " " +
+                this.calculator.outputUnit());
         }
-        return sum;
+        return result.join("\n");
     };
-    StoringAdder.prototype.getAverage = function () {
-        if (this.store.length > 0) {
-            return this.getSum() / this.store.length;
-        }
-        return 0;
-    };
-    StoringAdder.prototype.getRange = function () {
-        if (this.store.length === 0) {
-            return 0;
-        }
-        var minimum = this.store[0];
-        var maximum = minimum;
-        for (var _i = 0, _a = this.store; _i < _a.length; _i++) {
-            var amount = _a[_i];
-            if (amount < minimum) {
-                minimum = amount;
-            }
-            if (amount > maximum) {
-                maximum = amount;
-            }
-        }
-        return maximum - minimum;
-    };
-    StoringAdder.prototype.getMaximumValue = function () {
-        if (this.store.length === 0) {
-            return 0;
-        }
-        return Math.max.apply(Math, this.store);
-    };
-    return StoringAdder;
+    return CalculationsStore;
 }());
-var adder1 = new StoringAdder();
-var counter1 = new CharCounter(adder1);
-counter1.addWordCharacters("Juku");
-counter1.addWordCharacters("tuli");
-counter1.addWordCharacters("kooli");
-console.log(counter1.getCharacterCount());
-console.log(adder1.getAverage());
-console.log(adder1.getRange());
-console.log(adder1.getMaximumValue());
+var converter = new InchesToCm();
+var store1 = new CalculationsStore(converter);
+store1.addInput(0);
+store1.addInput(1);
+store1.addInput(5);
+store1.addInput(10);
+store1.addInput(20);
+store1.addInput(50);
+console.log(store1.getResult());
+var CmToInches = /** @class */ (function () {
+    function CmToInches() {
+    }
+    CmToInches.prototype.calculate = function (cm) {
+        return cm / 2.54;
+    };
+    CmToInches.prototype.inputUnit = function () {
+        return "cm";
+    };
+    CmToInches.prototype.outputUnit = function () {
+        return "in";
+    };
+    return CmToInches;
+}());
+var cmToInchesConverter = new CmToInches();
+var store2 = new CalculationsStore(cmToInchesConverter);
+store2.addInput(10);
+store2.addInput(20);
+store2.addInput(30);
+console.log(store2.getResult());
+var CustomMultiplier = /** @class */ (function () {
+    function CustomMultiplier(multiplier, input, output) {
+        this.multiplier = multiplier;
+        this.input = input;
+        this.output = output;
+    }
+    CustomMultiplier.prototype.calculate = function (x) {
+        return x * this.multiplier;
+    };
+    CustomMultiplier.prototype.inputUnit = function () {
+        return this.input;
+    };
+    CustomMultiplier.prototype.outputUnit = function () {
+        return this.output;
+    };
+    return CustomMultiplier;
+}());
+var decimetersToMillimetersConverter = new CustomMultiplier(10, "dm", "mm");
+var store3 = new CalculationsStore(decimetersToMillimetersConverter);
+store3.addInput(1);
+store3.addInput(2);
+store3.addInput(3);
+console.log(store3.getResult());
+var inchesToDecimetersConverter = new CustomMultiplier(0.254, "in", "dm");
+var store4 = new CalculationsStore(inchesToDecimetersConverter);
+store4.addInput(1);
+store4.addInput(2);
+store4.addInput(3);
+console.log(store4.getResult());
+var TaxiRidePriceCalculator = /** @class */ (function () {
+    function TaxiRidePriceCalculator(boardingFee, pricePerKilometer) {
+        this.boardingFee = boardingFee;
+        this.pricePerKilometer = pricePerKilometer;
+    }
+    TaxiRidePriceCalculator.prototype.calculate = function (kilometers) {
+        return this.boardingFee + kilometers * this.pricePerKilometer;
+    };
+    TaxiRidePriceCalculator.prototype.inputUnit = function () {
+        return "km";
+    };
+    TaxiRidePriceCalculator.prototype.outputUnit = function () {
+        return "€";
+    };
+    return TaxiRidePriceCalculator;
+}());
+var taxiRidePriceCalculator = new TaxiRidePriceCalculator(2, 0.8);
+var store5 = new CalculationsStore(taxiRidePriceCalculator);
+store5.addInput(5);
+store5.addInput(10);
+store5.addInput(20);
+console.log(store5.getResult());
+var CelsiusToFahrenheit = /** @class */ (function () {
+    function CelsiusToFahrenheit() {
+    }
+    CelsiusToFahrenheit.prototype.calculate = function (celsius) {
+        return (celsius * 9) / 5 + 32;
+    };
+    CelsiusToFahrenheit.prototype.inputUnit = function () {
+        return "°C";
+    };
+    CelsiusToFahrenheit.prototype.outputUnit = function () {
+        return "°F";
+    };
+    return CelsiusToFahrenheit;
+}());
+var celsiusToFahrenheitConverter = new CelsiusToFahrenheit();
+var store6 = new CalculationsStore(celsiusToFahrenheitConverter);
+store6.addInput(0);
+store6.addInput(10);
+store6.addInput(20);
+console.log(store6.getResult());
